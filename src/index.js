@@ -1,99 +1,68 @@
-/* ДЗ 1 - Функции */
+// Задание 1:
 
-/*
- Задание 1:
-
- 1.1: Добавьте к функции параметр с любым именем
- 1.2: Функция должна возвращать аргумент, переданный ей в качестве параметра
-
- Пример:
-   returnFirstArgument(10) вернет 10
-   returnFirstArgument('привет') вернет `привет`
-
- Другими словами: функция должна возвращать в неизменном виде то, что поступает ей на вход
- */
-function returnFirstArgument() {
+function returnFirstArgument(a) {
+  return a;
 }
 
-/*
- Задание 2:
+// Задание 2
 
- 2.1: Функция должна возвращать сумму переданных аргументов
-
- Пример:
-   sumWithDefaults(10, 20) вернет 30
-   sumWithDefaults(2, 4) вернет 6
-
- 2.1 *: Значение по умолчанию для второго аргумента должно быть равно 100
-
- Пример:
-   sumWithDefaults(10) вернет 110
- */
-function sumWithDefaults(a, b) {
+function sumWithDefaults(a, b = 100) {
+  return a + b;
 }
 
-/*
- Задание 3:
+console.log(sumWithDefaults(10));
 
- Функция должна принимать другую функцию и возвращать результат вызова этой функции
+// Задание 3
 
- Пример:
-   returnFnResult(() => 'привет') вернет 'привет'
- */
+function sum() {
+  return 5 + 5;
+}
+
 function returnFnResult(fn) {
+  return fn();
 }
 
-/*
- Задание 4:
+returnFnResult(sum);
 
- Функция должна принимать число и возвращать новую функцию (F)
- При вызове функции F, переданное ранее число должно быть увеличено на единицу и возвращено из F
+// Задание 4
 
- Пример:
-   var f = returnCounter(10);
+var f = returnCounter(10);
 
-   console.log(f()); // выведет 11
-   console.log(f()); // выведет 12
-   console.log(f()); // выведет 13
- */
-function returnCounter(number) {
+function returnCounter(num = 0) {
+  var i = 0;
+  return () => {
+    i++;
+    return num + i;
+  };
 }
 
-/*
- Задание 5 *:
+console.log(f());
 
- Функция должна возвращать все переданные ей аргументы в виде массива
- Количество переданных аргументов заранее неизвестно
+// Задание 5
 
- Пример:
-   returnArgumentsArray(1, 2, 3) вернет [1, 2, 3]
- */
 function returnArgumentsArray() {
+  var arr = [];
+  for (var i = 0; i < arguments.length; i++) {
+    arr.push(arguments[i]);
+  }
+  return arr;
 }
 
-/*
- Задание 6 *:
+console.log(returnArgumentsArray(1, 2, 3, 4));
 
- Функция должна принимать другую функцию (F) и некоторое количество дополнительных аргументов
- Функция должна привязать переданные аргументы к функции F и вернуть получившуюся функцию
+// Задание 6
 
- Пример:
-   function sum(a, b) {
-     return a + b;
-   }
-
-   var newSum = bindFunction(sum, 2, 4);
-
-   console.log(newSum()) выведет 6
- */
-function bindFunction(fn) {
+function bindFunction(fn, ...args) {
+  return function() {
+    return fn(...args);
+  };
 }
 
 export {
-    returnFirstArgument,
-    sumWithDefaults,
-    returnArgumentsArray,
-    returnFnResult,
-    returnCounter,
-    bindFunction
-}
+  returnFirstArgument,
+  sumWithDefaults,
+  returnArgumentsArray,
+  returnFnResult,
+  returnCounter,
+  bindFunction
+};
