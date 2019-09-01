@@ -15,13 +15,8 @@
 // }
 
 function forEach(array, fn) {
-    let elem, index, arr;
-
     for (var i = 0; i < array.length; i++) {
-        elem = array[i];
-        index = i;
-        arr = array;
-        fn(elem, index, arr);
+        fn(array[i], i, array);
     }
 }
 
@@ -116,7 +111,7 @@ function slice(array, from = 0, to = array.length) {
         start = 0;
     }
     if (end < start) {
-        return (newArr = []);
+        return newArr;
     }
     for (var i = start; i < end; i++) {
         newArr.push(array[i]);
