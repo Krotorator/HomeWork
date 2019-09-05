@@ -1,141 +1,89 @@
-/* ДЗ 2 - работа с массивами и объектами */
+/* ДЗ 5 - DOM Events */
 
 /*
  Задание 1:
 
- Напишите аналог встроенного метода forEach для работы с массивами
- Посмотрите как работает forEach и повторите это поведение для массива, который будет передан в параметре array
- */
-// function forEach(array, fn) {
-//     for (var i = 0; i < array.length; i++) {
-//         elem = array[i];
-//         index = i;
-//         fn(elem, index, array);
-//     }
-// }
+ Функция должна добавлять обработчик fn события eventName к элементу target
 
-function forEach(array, fn) {
-    for (var i = 0; i < array.length; i++) {
-        fn(array[i], i, array);
-    }
+ Пример:
+   addListener('click', document.querySelector('a'), () => console.log('...')) // должна добавить указанный обработчик кликов на указанный элемент
+ */
+function addListener(eventName, target, fn) {
+    target.addEventListener(eventName, fn);
 }
 
 /*
  Задание 2:
 
- Напишите аналог встроенного метода map для работы с массивами
- Посмотрите как работает map и повторите это поведение для массива, который будет передан в параметре array
+ Функция должна удалять у элемента target обработчик fn события eventName
+
+ Пример:
+   removeListener('click', document.querySelector('a'), someHandler) // должна удалить указанный обработчик кликов на указанный элемент
  */
-function map(array, fn) {
-    let elem, index, arr;
-    let newArr = [];
-
-    for (var i = 0; i < array.length; i++) {
-        elem = array[i];
-        index = i;
-        arr = array;
-        newArr.push(fn(elem, index, arr));
-    }
-
-    return newArr;
+function removeListener(eventName, target, fn) {
+    target.removeEventListener(eventName, fn);
 }
 
 /*
  Задание 3:
 
- Напишите аналог встроенного метода reduce для работы с массивами
- Посмотрите как работает reduce и повторите это поведение для массива, который будет передан в параметре array
+ Функция должна добавить к элементу target такой обработчик на события eventName, чтобы он отменял действия по умолчанию
+
+ Пример:
+   skipDefault('click', document.querySelector('a')) // после вызова функции, клики на указанную ссылку не должны приводить к переходу на другую страницу
  */
-
-function reduce(array, fn, initial) {
-    let elem, index, arr, start, accum;
-
-    if (!initial) {
-        accum = array[0];
-        start = 1;
-    } else if (initial) {
-        accum = initial;
-        start = 0;
-    }
-
-    for (var i = start; i < array.length; i++) {
-        index = i;
-        elem = array[i];
-        arr = array;
-        accum = fn(accum, elem, index, arr);
-    }
-
-    return accum;
+function skipDefault(eventName, target) {
+    target.addEventListener(eventName, function(e) {
+        e.preventDefault();
+    });
 }
 
 /*
  Задание 4:
 
- Функция должна перебрать все свойства объекта, преобразовать их имена в верхний регистр и вернуть в виде массива
+ Функция должна эмулировать событие click для элемента target
 
  Пример:
-   upperProps({ name: 'Сергей', lastName: 'Петров' }) вернет ['NAME', 'LASTNAME']
+   emulateClick(document.querySelector('a')) // для указанного элемента должно быть сэмулировано события click
  */
-function upperProps(obj) {
-    let arrOfKeys = [];
 
-    for (let key in obj) {
-        if (key) {
-            arrOfKeys.push(key.toUpperCase());
-        }
-    }
+function emulateClick(target) {
+    let event = new Event('click');
 
-    return arrOfKeys;
+    target.dispatchEvent(event);
+    target.onclick = alert('click');
 }
-
 /*
- Задание 5 *:
+ Задание 5:
 
- Напишите аналог встроенного метода slice для работы с массивами
- Посмотрите как работает slice и повторите это поведение для массива, который будет передан в параметре array
+ Функция должна добавить такой обработчик кликов к элементу target,
+ который реагирует (вызывает fn) только на клики по элементам BUTTON внутри target
+
+ Пример:
+   delegate(document.body, () => console.log('кликнули на button')) // добавит такой обработчик кликов для body, который будет вызывать указанную функцию только если кликнули на кнопку (элемент с тегом button)
  */
-function slice(array, from = 0, to = array.length) {
-    let start = from || 0;
-    let end = to;
-    let newArr = [];
-
-    if (end < 0) {
-        end = array.length - Math.abs(to);
-    } else if (end > array.length) {
-        end = array.length;
-    }
-    if (start < 0 && array.length + start < array.length) {
-        start = array.length + start;
-    }
-    if (start < 0 && array.length + start < array.length) {
-        start = 0;
-    }
-    if (end < start) {
-        return newArr;
-    }
-    for (var i = start; i < end; i++) {
-        newArr.push(array[i]);
-    }
-
-    return newArr;
-}
-
-/*
- Задание 6 *:
-
- Функция принимает объект и должна вернуть Proxy для этого объекта
- Proxy должен перехватывать все попытки записи значений свойств и возводить это значение в квадрат
- */
-function createProxy(obj) {
-    return new Proxy(obj, {
-        set(target, prop, val) {
-            if (typeof val == 'number') {
-                return (target[prop] = val * val);
-            }
-
-            return (target[prop] = val + val);
+function delegate(target, fn) {
+    target.addEventListener('click', function(e) {
+        if (e.target.tagName === 'BUTTON' && e.target != target) {
+            fn();
         }
     });
 }
 
-export { forEach, map, reduce, upperProps, slice, createProxy };
+/*
+ Задание 6:
+
+ Функция должна добавить такой обработчик кликов к элементу target,
+ который сработает только один раз и удалится (перестанет срабатывать для последующих кликов по указанному элементу)
+
+ Пример:
+   once(document.querySelector('button'), () => console.log('обработчик выполнился!')) // добавит такой обработчик кликов для указанного элемента, который вызовется только один раз и затем удалится
+ */
+function once(target, fn) {
+    function handler() {
+        fn();
+        target.removeEventListener('click', handler);
+    }
+    target.addEventListener('click', handler);
+}
+export { addListener, removeListener, skipDefault, emulateClick, delegate, once };
