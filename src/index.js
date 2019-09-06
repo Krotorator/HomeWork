@@ -242,8 +242,38 @@ function collectDOMStat(root) {
      nodes: [div]
    }
  */
-function observeChildNodes(where, fn) {}
+function observeChildNodes(where, fn) {
+    let observer = new MutationObserver(some);
 
+    let options = {
+        childList: true,
+        subtree: true
+    };
+
+    let observable = where;
+
+    let obj = {
+        type: '',
+        nodes: []
+    };
+
+    function some(mutations) {
+        for (const mutation of mutations) {
+            for (const key in mutation) {
+                if (key == 'addedNodes' && mutation[key].length > 0) {
+                    obj.nodes.push(mutation[key][0]);
+                    obj.type = 'insert';
+                } else if (key == 'removedNodes' && mutation[key].length > 0) {
+                    obj.nodes.push(mutation[key][0]);
+                    obj.type = 'remove';
+                }
+            }
+        }
+        fn(obj);
+    }
+
+    observer.observe(observable, options);
+}
 export {
     createDivWithText,
     prepend,
