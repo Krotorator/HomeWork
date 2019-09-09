@@ -62,12 +62,12 @@ function addListeners(target) {
     let cursorY;
     let cursorX;
 
-    target.addEventListener('dragstart', function(e) {
+    target.addEventListener('dragstart', function (e) {
         cursorY = e.offsetY;
         cursorX = e.offsetX;
     });
 
-    target.addEventListener('dragend', function(e) {
+    target.addEventListener('dragend', function (e) {
         target.style.top = e.pageY - cursorY + 'px';
         target.style.left = e.pageX - cursorX + 'px';
     });
@@ -75,7 +75,7 @@ function addListeners(target) {
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
 
-addDivButton.addEventListener('click', function() {
+addDivButton.addEventListener('click', function () {
     // создать новый div
     const div = createDiv();
 
@@ -88,3 +88,47 @@ addDivButton.addEventListener('click', function() {
 });
 
 export { createDiv };
+
+// const homeworkContainer = document.querySelector("#homework-container");
+// homeworkContainer.style.minHeight = "100vh";
+// homeworkContainer.style.position = "relative";
+// const btn = document.querySelector("#btn");
+// btn.style.cssText = "position: fixed; width: 100px; height: 100px;left: 20px; top: 20px; z-index: 1000";
+
+// btn.addEventListener("click", function (e) {
+//     let div = document.createElement("div");
+//     div.innerText = "Drag me" + "\n" + "mazafaka";
+//     let divHeight = getRandomInt(50, 300);
+//     let divWidth = getRandomInt(50, 300);
+//     div.style.width = divWidth + "px";
+//     div.style.height = divHeight + "px";
+//     div.style.display = "inline-block";
+//     div.style.position = "absolute";
+//     div.style.backgroundColor = `rgb(
+//         ${getRandomInt(0, 256)},
+//         ${getRandomInt(0, 256)},
+//         ${getRandomInt(0, 256)})`;
+//     let coords = homeworkContainer.getBoundingClientRect();
+
+//     div.style.top = getRandomInt(0, coords.height - divHeight) + "px";
+//     div.style.left = getRandomInt(0, coords.width - divWidth) + "px";
+
+//     div.setAttribute("draggable", "true");
+//     let cursorY;
+//     let cursorX;
+//     div.addEventListener("dragstart", function (e) {
+//         cursorY = e.offsetY;
+//         cursorX = e.offsetX;
+//     });
+
+//     div.addEventListener("dragend", function (e) {
+//         div.style.top = e.pageY - cursorY + "px";
+//         div.style.left = e.pageX - cursorX + "px";
+//     });
+
+//     homeworkContainer.appendChild(div);
+
+//     function getRandomInt(min, max) {
+//         return Math.floor(Math.random() * (max - min + 1)) + min;
+//     }
+// });
