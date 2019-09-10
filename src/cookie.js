@@ -43,16 +43,8 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-const addBlock = homeworkContainer.querySelector('#add-block');
-
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-});
-
-addBlock.addEventListener('focus', function(e) {
-    if (e.target.tagName === 'INPUT') {
-        e.target.value = '';
-    }
 });
 
 addButton.addEventListener('click', () => {
