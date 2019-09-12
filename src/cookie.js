@@ -45,6 +45,7 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    sortCookies();
 });
 
 addButton.addEventListener('click', () => {
@@ -52,15 +53,17 @@ addButton.addEventListener('click', () => {
     document.cookie = `${addNameInput.value} = ${addValueInput.value}`;
     const cookiesExist = parseCookies();
 
-    if (addNameInput.value != '' || addValueInput.value != '') {
+    if (!filterNameInput.value) {
         listTable.innerHTML = '';
         for (const name in cookiesExist) {
             addCookie(name, cookiesExist[name]);
         }
+    } else if (!isMatching(name, filterNameInput.value)) {
+        document.cookie = `${addNameInput.value} = ${addValueInput.value}`;
+    } else if (isMatching(cookiesExist[name], filterNameInput.value)) {
+        listTable.innerHTML = '';
+        addCookie(name, cookiesExist[name]);
     }
-
-    addNameInput.value = '';
-    addValueInput.value = '';
 });
 
 window.addEventListener('load', () => {
@@ -79,11 +82,14 @@ function addCookie(name, value) {
     const td2 = document.createElement('td');
     const deleteBtn = document.createElement('button');
 
-    td1.innerText = name;
-    td2.innerText = value;
-    deleteBtn.innerText = 'Delete this cookie';
-    tr.append(td1, td2, deleteBtn);
-    listTable.append(tr);
+    if (name != '' && value != '') {
+        td1.innerText = name;
+        td2.innerText = value;
+        deleteBtn.innerText = 'Delete this cookie';
+        tr.append(td1, td2, deleteBtn);
+        listTable.append(tr);
+    }
+
     deleteBtn.addEventListener('click', () => {
         deleteCookie(name);
         deleteBtn.parentElement.remove();
@@ -107,4 +113,29 @@ function parseCookies() {
     }, {});
 
     return cookies;
+}
+
+function sortCookies() {
+    const cookies = parseCookies();
+
+    listTable.innerHTML = '';
+    if (filterNameInput.value != '') {
+        for (const name in cookies) {
+            if (isMatching(name, filterNameInput.value) || isMatching(cookies[name], filterNameInput.value)) {
+                addCookie(name, cookies[name]);
+            }
+        }
+    } else {
+        for (const name in cookies) {
+            addCookie(name, cookies[name]);
+        }
+    }
+}
+
+function isMatching(full, chunk) {
+    if (full.toLowerCase().indexOf(chunk.toLowerCase()) !== -1) {
+        return true;
+    }
+
+    return false;
 }
