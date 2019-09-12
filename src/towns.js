@@ -37,35 +37,21 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-    return new Promise(function(resolve) {
-        var xhr = new XMLHttpRequest();
-
-        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
-        xhr.responseType = 'json';
-        xhr.send();
-
-        xhr.addEventListener('load', () => {
-            if (xhr.status <= 400) {
-                const response = xhr.response;
-                const cities = [];
-
-                for (let i = 0; i < response.length; i++) {
-                    cities.push(response[i]);
+    return fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
+        .then(response => response.json())
+        .then(cities => {
+            const sortCities = cities.sort(function(a, b) {
+                if (a.name > b.name) {
+                    return 1;
+                } else if (b.name > a.name) {
+                    return -1;
                 }
-                cities.sort((a, b) => {
-                    if (a.name < b.name) {
-                        return -1;
-                    }
-                    if (a.name > b.name) {
-                        return 1;
-                    }
 
-                    return 0;
-                });
-                resolve(cities);
-            }
+                return 0;
+            });
+
+            return sortCities;
         });
-    });
 }
 
 /*
@@ -79,6 +65,26 @@ function loadTowns() {
    isMatching('Moscow', 'SCO') // true
    isMatching('Moscow', 'Moscov') // false
  */
+
+function listen(eventTarget, serverResponseArr, finalTarget) {
+    eventTarget.addEventListener('keyup', function() {
+        finalTarget.innerHTML = '';
+        let userType = eventTarget.value;
+
+        for (let i = 0; i < serverResponseArr.length; i++) {
+            if (isMatching(serverResponseArr[i].name, userType)) {
+                const li = document.createElement('li');
+
+                li.innerText = serverResponseArr[i].name;
+                finalTarget.appendChild(li);
+            }
+        }
+        if (userType === '') {
+            finalTarget.innerHTML = '';
+        }
+    });
+}
+
 function isMatching(full, chunk) {
     if (full.toLowerCase().indexOf(chunk.toLowerCase()) !== -1) {
         return true;
@@ -87,11 +93,26 @@ function isMatching(full, chunk) {
     return false;
 }
 
-loadTowns().then(function(towns) {
-    cities = towns;
+function succes(serverResponseArr) {
     loadingBlock.style.display = 'none';
     filterBlock.style.display = 'block';
-});
+
+    return serverResponseArr;
+}
+function errorDOM(error) {
+    const reload = confirm(`Loading error: ${error.message}. Try again?`);
+
+    if (reload) {
+        loadTowns();
+    }
+}
+
+function showTowns() {
+    loadTowns()
+        .then(cities => succes(cities))
+        .then(cities => listen(filterInput, cities, filterResult))
+        .catch(error => errorDOM(error));
+}
 
 /* Блок с надписью "Загрузка" */
 const loadingBlock = homeworkContainer.querySelector('#loading-block');
@@ -102,23 +123,6 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-let cities = [];
-
-filterInput.addEventListener('keyup', function() {
-    filterResult.innerHTML = '';
-    let userType = filterInput.value;
-
-    for (let i = 0; i < cities.length; i++) {
-        if (isMatching(cities[i].name, userType)) {
-            const li = document.createElement('li');
-
-            li.innerText = cities[i].name;
-            filterResult.appendChild(li);
-        }
-    }
-    if (userType === '') {
-        filterResult.innerHTML = '';
-    }
-});
+showTowns();
 
 export { loadTowns, isMatching };
